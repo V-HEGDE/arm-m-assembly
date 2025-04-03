@@ -55,13 +55,24 @@ systick_handler:
 
 #implement write stack pointer
     ldr r0, = st1
-    ldr r1,[r0]
     ldr r2,[r0,#4]
-    ldr r3,[r0,#8]
-    ldr r5,[r0,r4]
-    mov sp,r5
+
+    cmp sp,r2
+    bgt greater
+    blt lesser
+    ldr r5,[r0,#8]
+    b Brake
+
+greater :
+    ldr r5,[r0]
+    b Brake
+
+lesser :
+    ldr r5,[r0,#4]
+    b Brake
 
 Brake:
+    mov sp,r5
 
     pop {r4-r7}
     mov r8,r4
@@ -97,7 +108,8 @@ main2:
 main3:
     add r3,r3,#3
     push {r0}
-    mov r0,#0xff
+    movw r0,#0x1234
+    movt r0,#0x5678
     cmp r0,r3
     beq stand
     pop {r0}
@@ -115,7 +127,7 @@ Stack1:
     .word 0x19
     .word 0x1a
     .word 0x1b
-    .word 0x04
+    .word 0x14
     .word 0x15
     .word 0x16
     .word 0x17
@@ -135,7 +147,7 @@ Stack2:
     .word 0x29
     .word 0x2a
     .word 0x2b
-    .word 0x08
+    .word 0x24
     .word 0x25
     .word 0x26
     .word 0x27
@@ -155,7 +167,7 @@ Stack3:
     .word 0x39
     .word 0x3a
     .word 0x3b
-    .word 0x00
+    .word 0x34
     .word 0x35
     .word 0x36
     .word 0x37
